@@ -1,0 +1,14 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font: 11px sans-serif;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: #f4fffd;
+  padding-top: 150px;
+  padding-bottom: 100px;
+}
