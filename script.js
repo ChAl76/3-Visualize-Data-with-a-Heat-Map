@@ -66,6 +66,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Y Axis
       svg.append('g').attr('id', 'y-axis').call(d3.axisLeft(yScale));
+
+      // Title
+      svg
+        .append('text')
+        .attr('id', 'title')
+        .attr('x', width / 2)
+        .attr('y', -margin.top / 1.7)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '26px')
+        .text('Monthly Global Land-Surface Temperature');
+
+      // Description
+      svg
+        .append('text')
+        .attr('id', 'description')
+        .attr('x', width / 2)
+        .attr('y', -margin.top / 2 + 18)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '18px')
+        .text('Temperatures from 1754 to 2015');
     })
     .catch((error) => console.error('Error loading the data:', error));
 });
