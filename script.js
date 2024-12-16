@@ -131,6 +131,62 @@ document.addEventListener('DOMContentLoaded', () => {
         .on('mouseout', () => {
           tooltip.transition().duration(500).style('opacity', 0);
         });
+
+      // Legend
+      const [minTemp, maxTemp] = d3.extent(
+        monthlyData,
+        (d) => baseTemperature + d.variance
+      );
+      const legendColors = [0, 0.1, 0.2, 0.35, 0.5, 0.65, 0.75, 0.9, 1].map(
+        reversedRdBu
+      );
+
+      const legendThreshold = d3
+        .scaleThreshold()
+        .domain(
+          (() => {
+            const step = (maxTemp - minTemp) / legendColors.length;
+            return Array.from(
+              { length: legendColors.length - 1 },
+              (_, i) => minTemp + (i + 1) * step
+            );
+          })()
+        )
+        .range(legendColors);
+
+      const legendX = d3
+        .scaleLinear()
+        .domain([minTemp, maxTemp])
+        .range([0, 350]);
+
+      const legend = svg
+        .append('g')
+        .attr('id', 'legend')
+        .attr('transform', `translate(${(width - 350) / 2}, ${height + 50})`);
+
+      legend
+        .selectAll('rect')
+        .data(
+          legendThreshold.range().map((color) => {
+            const extent = legendThreshold.invertExtent(color);
+            return [extent[0] ?? minTemp, extent[1] ?? maxTemp];
+          })
+        )
+        .enter()
+        .append('rect')
+        .attr('x', (d) => legendX(d[0]))
+        .attr('y', 0)
+        .attr('width', (d) => legendX(d[1]) - legendX(d[0]))
+        .attr('height', 30)
+        .attr('fill', (d) => legendThreshold(d[0]));
+
+      const legendXAxis = d3
+        .axisBottom(legendX)
+        .tickSize(10, 0)
+        .tickValues(legendThreshold.domain())
+        .tickFormat(d3.format('.1f'));
+
+      legend.append('g').attr('transform', 'translate(0,30)').call(legendXAxis);
     })
     .catch((error) => console.error('Error loading the data:', error));
 });
