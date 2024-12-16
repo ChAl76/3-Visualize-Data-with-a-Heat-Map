@@ -35,4 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
     .append('div')
     .attr('id', 'tooltip')
     .style('opacity', 0);
+
+  // Fetch and process data
+  d3.json(dataURL)
+    .then((data) => {
+      const baseTemperature = data.baseTemperature;
+      const monthlyData = data.monthlyVariance;
+    })
+    .catch((error) => console.error('Error loading the data:', error));
 });
