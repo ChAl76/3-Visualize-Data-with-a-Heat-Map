@@ -41,6 +41,31 @@ document.addEventListener('DOMContentLoaded', () => {
     .then((data) => {
       const baseTemperature = data.baseTemperature;
       const monthlyData = data.monthlyVariance;
+
+      // X Scale (Years)
+      const years = monthlyData.map((d) => d.year);
+      const xScale = d3.scaleBand().domain(years).range([0, width]).padding(0);
+
+      // X Axis
+      svg
+        .append('g')
+        .attr('id', 'x-axis')
+        .attr('transform', `translate(0,${height})`)
+        .call(
+          d3
+            .axisBottom(xScale)
+            .tickValues(xScale.domain().filter((year) => year % 10 === 0))
+        );
+
+      // Y Scale (Months)
+      const yScale = d3
+        .scaleBand()
+        .domain(monthNames.reverse())
+        .range([height, 0])
+        .padding(0);
+
+      // Y Axis
+      svg.append('g').attr('id', 'y-axis').call(d3.axisLeft(yScale));
     })
     .catch((error) => console.error('Error loading the data:', error));
 });
