@@ -35,3 +35,8 @@ body {
   pointer-events: none;
   opacity: 0.9;
 }
+
+.cell:hover {
+  stroke: #555555;
+  stroke-width: 0.5px;
+}

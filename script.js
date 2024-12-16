@@ -86,6 +86,51 @@ document.addEventListener('DOMContentLoaded', () => {
         .attr('text-anchor', 'middle')
         .style('font-size', '18px')
         .text('Temperatures from 1754 to 2015');
+
+      // Color Scale
+      const reversedRdBu = (t) => d3.interpolateRdBu(1 - t);
+
+      const colorScale = d3
+        .scaleSequential()
+        .domain([
+          d3.min(monthlyData, (d) => baseTemperature + d.variance),
+          d3.max(monthlyData, (d) => baseTemperature + d.variance),
+        ])
+        .interpolator(reversedRdBu);
+
+      // Create Cells
+      svg
+        .selectAll('.cell')
+        .data(monthlyData)
+        .enter()
+        .append('rect')
+        .attr('class', 'cell')
+        .attr('x', (d) => xScale(d.year))
+        .attr('y', (d) => yScale(monthNames[12 - d.month]))
+        .attr('width', xScale.bandwidth())
+        .attr('height', yScale.bandwidth())
+        .attr('fill', (d) => colorScale(baseTemperature + d.variance))
+        .attr('data-month', (d) => d.month - 1)
+        .attr('data-year', (d) => d.year)
+        .attr('data-temp', (d) => baseTemperature + d.variance)
+        .on('mouseover', (event, d) => {
+          tooltip.transition().duration(200).style('opacity', 0.9);
+          tooltip
+            .html(
+              `
+            Year: ${d.year}<br>
+            Month: ${monthNames[12 - d.month]}<br>
+            Temperature: ${(baseTemperature + d.variance).toFixed(2)}°C<br>
+            Variance: ${d.variance.toFixed(2)}°C
+          `
+            )
+            .style('left', `${event.pageX + 10}px`)
+            .style('top', `${event.pageY + 10}px`)
+            .attr('data-year', d.year);
+        })
+        .on('mouseout', () => {
+          tooltip.transition().duration(500).style('opacity', 0);
+        });
     })
     .catch((error) => console.error('Error loading the data:', error));
 });
